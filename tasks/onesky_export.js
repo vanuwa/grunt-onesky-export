@@ -30,6 +30,11 @@ module.exports = function (grunt) {
             sortKeys: false,
             indent: 4,
             exportType: 'multilingual',
+            /**
+             * warn - show warning on fail and continue execution
+             * error - show error and break execution
+             * */
+            failMode: 'error',
 
             // Required only for exporting translations in separate language files
             locale: ''
@@ -89,7 +94,7 @@ module.exports = function (grunt) {
                     onFetchTranslationError(response);
                 }
             } else {
-                grunt.fail.warn('Request error');
+                fail('Request error: ' + error);
             }
 
             done();
@@ -124,14 +129,31 @@ module.exports = function (grunt) {
         function onFetchTranslationError(error) {
             switch (error.statusCode) {
                 case 400:
-                    grunt.fail.warn('Invalid source file: ' + options.sourceFile);
+                    fail('Invalid source file: ' + options.sourceFile);
                     break;
                 case 401:
-                    grunt.fail.warn('Unauthorized - Invalid OneSky API keys / project ID');
+                    fail('Unauthorized - Invalid OneSky API keys / project ID');
                     break;
                 default:
+                    unhanledErrorNotification(error);
                     break;
             }
+        }
+
+        function unhanledErrorNotification (error) {
+            error = JSON.parse(error);
+            var errorMsg;
+            var statusCode;
+
+            if (_.has(error, 'meta.status')) {
+                statusCode = error.meta.status;
+            }
+
+            if (_.has(error, 'meta.message')) {
+                errorMsg = error.meta.message;
+            }
+
+            fail(statusCode + ': ' + errorMsg);
         }
 
 
@@ -148,6 +170,14 @@ module.exports = function (grunt) {
                 timestamp: timestamp,
                 devHash: devHash
             };
+        }
+
+        function fail () {
+            if (options.failMode === 'warn') {
+                grunt.log.writeln(("Warning: " + arguments[0]).yellow);
+            } else {
+                grunt.fail.warn(arguments[0]);
+            }
         }
     });
 };
