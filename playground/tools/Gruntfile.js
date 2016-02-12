@@ -1,26 +1,85 @@
 module.exports = function (grunt) {
-    grunt.file.setBase('../');
+    grunt.file.setBase('../../');
 
     grunt.initConfig({
-        oneskyExport: {
-            default: {
-                options: {
-                    authFile: "locale/onesky.json",
-                    dest: 'locale/tmp/',
+        project: {
+            onesky: {
+                rootPath: 'playground/locale/',
+                translation: {
                     projectId: '13823',
-                    sourceFile: 'translation.json',
-                    output: 'translation_output.json',
-                    exportType: 'locale',
-                    locale: 'en',
-                    failMode: 'warn'
+                    output: 'translation.json'
+                },
+                translationForValidation: {
+                    projectId: '52900',
+                    output: 'validation.json'
                 }
+            }
+        },
+        oneskyExport: {
+            options: {
+                authFile: '<%= project.onesky.rootPath %>onesky.json',
+                exportType: 'locale',
+                projectId: '<%= project.onesky.translation.projectId %>',
+                sourceFile: 'translation.json',
+                output: '<%= project.onesky.translation.output %>',
+                failMode: 'warn'
+            },
+            en: {
+                options: {
+                    locale: 'en',
+                    dest: '<%= project.onesky.rootPath %>en/'
+                }
+            },
+            validation_en: {
+                options: {
+                    locale: 'en',
+                    dest: '<%= project.onesky.rootPath %>en/',
+                    projectId: '<%= project.onesky.translationForValidation.projectId %>',
+                    output: '<%= project.onesky.translationForValidation.output %>'
+                }
+            },
+            fr: {
+                options: {
+                    locale: 'fr',
+                    dest: '<%= project.onesky.rootPath %>fr/'
+                }
+            },
+            validation_fr: {
+                options: {
+                    locale: 'fr',
+                    dest: '<%= project.onesky.rootPath %>fr/',
+                    projectId: '<%= project.onesky.translationForValidation.projectId %>',
+                    output: '<%= project.onesky.translationForValidation.output %>'
+                }
+            }
+        },
+        mergeTranslations: {
+            options: {
+                failMode: 'warn'
+            },
+            en: {
+                options: {
+                    originalTranslationPath: '<%= oneskyExport.en.options.dest %><%= oneskyExport.options.output %>',
+                    translationForValidationPath: '<%= oneskyExport.validation_en.options.dest %><%= oneskyExport.validation_en.options.output %>'
+                }
+            }
+        },
+        'json-pretty': {
+            options: {
+                src: [ 'playground/locale/' ],
+                files: '*',
+                indent: 2,
+                cleanup: true
             }
         }
 
     });
 
-    grunt.loadTasks('../tasks');
+    grunt.loadNpmTasks('grunt-json-pretty');
+
+    grunt.loadTasks('tasks');
 
     grunt.registerTask('default', ['oneskyExport']);
+    grunt.registerTask('translations', [ 'oneskyExport', 'mergeTranslations', 'json-pretty' ]);
 
 };

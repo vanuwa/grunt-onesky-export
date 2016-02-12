@@ -129,7 +129,7 @@ module.exports = function (grunt) {
         function onFetchTranslationError(error) {
             switch (error.statusCode) {
                 case 400:
-                    fail('Invalid source file: ' + options.sourceFile);
+                    fail('[ Status Code: 400 ] ' + 'Invalid source file: ' + options.sourceFile);
                     break;
                 case 401:
                     fail('Unauthorized - Invalid OneSky API keys / project ID');
