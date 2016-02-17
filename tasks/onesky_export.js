@@ -76,6 +76,10 @@ module.exports = function (grunt) {
 
             requestOptions.qs = _.extend(requestOptions.qs, queryParams);
 
+            if (options.requestTimeout) {
+                requestOptions.timeout = options.requestTimeout;
+            }
+
             return request(requestOptions, onFetchTranslations);
         }
 

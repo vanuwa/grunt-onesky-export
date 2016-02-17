@@ -22,6 +22,7 @@ module.exports = function (grunt) {
                 projectId: '<%= project.onesky.translation.projectId %>',
                 sourceFile: 'translation.json',
                 output: '<%= project.onesky.translation.output %>',
+                requestTimeout: 15000,
                 failMode: 'warn'
             },
             en: {
