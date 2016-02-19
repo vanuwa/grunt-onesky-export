@@ -39,16 +39,16 @@ module.exports = function (grunt) {
                     output: '<%= project.onesky.translationForValidation.output %>'
                 }
             },
-            fr: {
+            de: {
                 options: {
-                    locale: 'fr',
-                    dest: '<%= project.onesky.rootPath %>fr/'
+                    locale: 'de',
+                    dest: '<%= project.onesky.rootPath %>de/'
                 }
             },
-            validation_fr: {
+            validation_de: {
                 options: {
-                    locale: 'fr',
-                    dest: '<%= project.onesky.rootPath %>fr/',
+                    locale: 'de',
+                    dest: '<%= project.onesky.rootPath %>de/',
                     projectId: '<%= project.onesky.translationForValidation.projectId %>',
                     output: '<%= project.onesky.translationForValidation.output %>'
                 }

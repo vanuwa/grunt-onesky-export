@@ -80,6 +80,7 @@ module.exports = function (grunt) {
                 requestOptions.timeout = options.requestTimeout;
             }
 
+            grunt.log.writeln("Fetching translations for locale %s", options.locale);
             return request(requestOptions, onFetchTranslations);
         }
 
@@ -88,14 +89,19 @@ module.exports = function (grunt) {
             var contentType = 'application/json';
 
             if (!error) {
-                if (response.statusCode === 200) {
-
-                    if (_.has(response, 'headers.content-type')) {
-                        contentType = response['headers']['content-type'];
-                    }
-                    onFetchTranslationSuccess(body, contentType);
-                } else {
-                    onFetchTranslationError(response);
+                switch (response.statusCode) {
+                    case 200:
+                        if (_.has(response, 'headers.content-type')) {
+                            contentType = response.headers['content-type'];
+                        }
+                        onFetchTranslationSuccess(body, contentType);
+                        break;
+                    case 204:
+                      grunt.log.ok('Response statusCode is 204 (Empty file)'.green);
+                        onFetchTranslationSuccess(null);
+                        break;
+                    default:
+                        onFetchTranslationError(response);
                 }
             } else {
                 fail('Request error: ' + error);
@@ -126,11 +132,12 @@ module.exports = function (grunt) {
                 grunt.file.write(options.dest + fileName, fileData);
             }
 
-            grunt.log.ok('Translation Downloaded: ' + options.dest + fileName);
+            grunt.log.ok('Translation for locale %s successfully download to %s: '.green, options.locale, options.dest + fileName);
         }
 
 
         function onFetchTranslationError(error) {
+            grunt.log.writeln("Fetching translations error for locale %s".yellow, options.locale, error.statusCode);
             switch (error.statusCode) {
                 case 400:
                     fail('[ Status Code: 400 ] ' + 'Invalid source file: ' + options.sourceFile);
