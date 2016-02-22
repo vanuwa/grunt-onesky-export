@@ -31,21 +31,31 @@ module.exports = function (grunt) {
       } else {
         fail('Uknown error:\n' + translationForValidation + '\n' + originalTranslation);
       }
+
+      function readJSON (path) {
+        if (grunt.file.exists(path)) {
+          var json;
+
+          try {
+            json = grunt.file.readJSON(path);
+          } catch (exp) {
+            fail(exp);
+            return null;
+          }
+
+          return json;
+        } else {
+          grunt.log.writeln(('File doesn\'t exists: ' + path).yeallow);
+        }
+      }
+
+      function fail () {
+        if (options.failMode === 'warn') {
+          grunt.log.writeln(("Warning: " + arguments[0]).yellow);
+        } else {
+          grunt.fail.warn(arguments[0]);
+        }
+      }
+
     });
-
-  function readJSON (path) {
-    if (grunt.file.exists(path)) {
-      return grunt.file.readJSON(path);
-    } else {
-      grunt.log.writeln(('File doesn\'t exists: ' + path).yeallow);
-    }
-  }
-
-  function fail () {
-    if (options.failMode === 'warn') {
-      grunt.log.writeln(("Warning: " + arguments[0]).yellow);
-    } else {
-      grunt.fail.warn(arguments[0]);
-    }
-  }
 };
