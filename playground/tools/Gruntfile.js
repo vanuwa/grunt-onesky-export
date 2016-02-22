@@ -58,6 +58,12 @@ module.exports = function (grunt) {
             options: {
                 failMode: 'warn'
             },
+            de: {
+                options: {
+                    originalTranslationPath: '<%= oneskyExport.de.options.dest %><%= oneskyExport.options.output %>',
+                    translationForValidationPath: '<%= oneskyExport.validation_de.options.dest %><%= oneskyExport.validation_de.options.output %>'
+                }
+            },
             en: {
                 options: {
                     originalTranslationPath: '<%= oneskyExport.en.options.dest %><%= oneskyExport.options.output %>',
