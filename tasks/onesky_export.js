@@ -145,6 +145,12 @@ module.exports = function (grunt) {
                 case 401:
                     fail('Unauthorized - Invalid OneSky API keys / project ID');
                     break;
+                case 500:
+                    fail('[ Status Code: 500 ] Internal sever error');
+                    break;
+                case 504:
+                    fail('[ Status Code: 504 ] Gateway timeout');
+                    break;
                 default:
                     unhanledErrorNotification(error);
                     break;
